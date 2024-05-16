@@ -1,5 +1,6 @@
 import React from "react"
 import { UserData } from "./UserData"
+import { UserDataClass } from "./UserDataClass"
 
 import "./user.css";
 import user from "./user.json";
@@ -9,8 +10,11 @@ function App() {
 
  
   return (
-    <UserData name={sarah} age={20} phoneNumber={2222} address={wewewe} />
 
+  <div>
+    <UserData name={user.name} age={user.age} phoneNumber={user.phoneNumber} address={user.address} />
+    <UserDataClass name={user.name} age={user.age} phoneNumber={user.phoneNumber} address={user.address} />
+  </div>
   )
   
 
