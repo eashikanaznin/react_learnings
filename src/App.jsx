@@ -1,79 +1,154 @@
-import React from "react"
-import { TodoList } from "./TodoList"
-import { TodoListClass } from "./TodoListClass"
-import { Name } from "./Name"
-import { TodoChecklist } from "./TodoChecklist"
-import "./style.css";
-import user from "./user.json";
-import img from "./sample.png";
+import { useState } from "react";
+import { MyCounter } from "./MyCounter";
+import { MyCounterClass } from "./MyCounterClass";
 
+const INITIAL_VAL = ["A", "B", "C", "B", "A", "M"];
+function expensiveFunction() {
+  return "slow getter";
+}
+
+function incrementCounter() {}
 
 function App() {
+  // Hooks should be used at the top of the file
+  // const values = useState()
+  // const name = values[0] // current value of the state
+  // const setName = values[1] // Fn that allows us to set values
 
-  // // JXS is XML version of JS
-  // // camelcased except data ans aria attr
-  // // wrapped by {} is JS code
+  // Common way to write
+  //  const [ name, setName ] = useState("Eashika")
 
+  // slow getter example, instead of this use inline function
+  // renders everything everytime
+  // const [name, setName ] = useState(expensiveFunction())
+  // this wont render the whole thing again
+  // const [name, setName ] = useState(() => {
+  //   return 'John'
+  // })
+  const [name, setName] = useState("John");
+  const [age, setAge] = useState(90);
+  const [val, setVal] = useState("");
+  {
+    /* Array State */
+  }
+  const [array, setArray] = useState(INITIAL_VAL);
 
-  // // return array / string
-  // // return [1,2,3]
+  function removeFirstElement() {
+    setArray((currentArray) => {
+      return currentArray.slice(1);
+    });
+  }
+  function removeSpecificElement(letter) {
+    setArray((currentArray) => {
+      return currentArray.filter((element) => element !== letter);
+    });
+  }
+  function addElementBefore(letter) {
+    setArray((currentArray) => {
+      return [letter, ...currentArray];
+    });
+  }
+  function addElementAfter(letter) {
+    setArray((currentArray) => {
+      return [...currentArray, letter];
+    });
+  }
+  function clear() {
+    setArray([]);
+  }
+  function reset() {
+    setArray([INITIAL_VAL]);
+  }
+  function updateAtoH() {
+    setArray((currentArray) => {
+      return currentArray.map((element) => {
+        if (element === "A") return "H";
+        if (element === "M") return "K";
+        return element;
+      });
+    });
+  }
+  function addAnyIndex(index, letter) {
+    setArray(
+      currentArray => {
+        return [...currentArray.slice(0,index), letter, ...currentArray.slice(index)]
+      }
+    );
+  }
 
-  // const myCustomlbl = <label htmlFor="inputId">TEST</label>
-  // return  (
-  // // <h1 id="5" className="pink" style={{backgroundColor: "blue"}}>
-  // //  {2+2}
-  // // </h1>
-  
-  // // Practice task 
-  // <div className="large" id="largeDiv">
-  //   {myCustomlbl}
-  //   <input id="inputId" type="number" defaultValue="3" />
-  // </div>
-
-  // )
-
-  // return React.createElement("h1", {'id': "5"}, "Hello World") 
-
+  function changeName() {
+    setName("Sally");
+    setAge(age + 1);
+  }
 
   return (
+    // changes the name onclick H1
+    // dont pass the function
     <div>
-      {/* <h1>Todo List</h1> */}
-      <h1>Todo List</h1>
+      <h1 onClick={changeName}>
+        Hi {name} , your age is: {age}
+      </h1>
 
-      <Name name="My Cus name 1" age={50} isAdult={true} />
-      <Name name="My Cus name 2" isAdult={false} />
+      {/* COUNTER COMPONENT PRACTICE TEST */}
+      <MyCounter />
 
-      <AnotherName/>
+      {/* COUNTER COMPONENT CLASS PRACTICE TEST */}
+      {/* <MyCounterClass/> */}
 
-      <TodoList>
-        <span>child name</span>
-      </TodoList>
+      {/* Input */}
+      <div>
+        <h2>Input</h2>
+        {/* controlled */}
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
+        <br />
+        <br />
 
-      <TodoListClass fruitTitle = "Mango">
-        <li>Apple</li>
-      </TodoListClass>
+        {/* controlled by the browser */}
+        <input type="text" defaultDalue={name} />
+        <br />
+        <br />
 
-      {/* checkbox example */}
-      <TodoChecklist isComplete="true">
-        Jane
-      </TodoChecklist>
-
-      {/*  Rendering json */}
-      <div>{JSON.stringify(user)}</div>
-
-      {/*  Rendering image */}
-      <div><img src={img}/></div>
-      
+        {/* Array State */}
+        <h2>Array state</h2>
+        <button onClick={removeFirstElement}> Remove First Element </button>
+        <br />
+        <button onClick={() => removeSpecificElement("B")}>
+          {" "}
+          Remove All 'B'{" "}
+        </button>
+        <br />
+        <button onClick={() => addElementBefore("O")}> Add Before </button>
+        <br />
+        <button onClick={() => addElementAfter("Z")}> Add After </button>
+        <br />
+        <button onClick={clear}> Clear </button>
+        <br />
+        <button onClick={reset}> Reset </button>
+        <br />
+        <button onClick={updateAtoH}> Update A to H </button>
+        <br />
+        <input
+          type="text"
+          value={val}
+          onChange={(el) => setVal(el.target.value)}
+        />
+        <br />
+        <button onClick={() => addElementBefore(val)}>
+          Add input val to array
+        </button>
+        <button onClick={() => addAnyIndex(2, "P")}>
+          Add to any index
+        </button>
+        <br />
+        <br />
+        <div>{array.join(",")}</div>
+      </div>
     </div>
-
-  )
-  
+  );
 }
 
-// Keeping component in the same file
-class AnotherName extends React.Component {
-  render(){
-    return <b> Naznin</b>
-  }
-}
-export default App
+export default App;
