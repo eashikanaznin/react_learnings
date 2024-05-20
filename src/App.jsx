@@ -1,20 +1,17 @@
-import React from "react"
-// import { TodoListClass } from "./TodoListClass"
-import { NamedCounter } from "./NamedCounter"
+import { useState } from "react"
+import { Child } from "./Child"
 
+export default function App() {
+  const [show, setShow] = useState(true)
 
-
-
-function App() {
+  const childComponent = show ? <Child /> : null
 
   return (
     <div>
-      <NamedCounter/>
+      <button onClick={() => setShow(currentShow => !currentShow)}>
+        Show/Hide
+      </button>
+      {childComponent}
     </div>
-
   )
-  
 }
-
-
-export default App
