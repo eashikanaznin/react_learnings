@@ -1,54 +1,29 @@
 import { useState, useEffect } from "react";
 
 export function Child() {
-  const [age, setAge] = useState(0);
-  const [name, setName] = useState("");
-
-  // const handler = () => {
-  //   console.log(name)
-  // }
+  const [users, setUsers] = useState();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState();
 
   useEffect(() => {
-    console.log("Render");
-  });
-
-  useEffect(() => {
-    console.log("Hi");
-    // gets called during unmount
-    return () => {
-      console.log("bye");
-    };
+    fetch("https://jsonplaceholder.typicode.com/posts")
+      .then((response) => response.json())
+      .then((data) => {
+        setUsers(JSON.stringify(data));
+      })
+      .catch((e) => setError(e))
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
 
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      console.log(`My name is ${name} and I am ${age} years old.`);
-    }, 1000);
-
-    return() => {
-      clearTimeout(timeout)
-    }
-  }, [name, age]);
-
-  useEffect(() => {
-    document.title = name;
-  }, [name]);
-
-  return (
-    <div>
-      <input
-        type="text"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <br />
-      <br />
-      <button onClick={() => setAge((a) => a - 1)}>-</button>
-      {age}
-      <button onClick={() => setAge((a) => a + 1)}>+</button>
-      <br />
-      <br />
-      My name is {name} and I am {age} years old.
-    </div>
-  );
+  let jsx;
+  if (loading) {
+    jsx = "Loading";
+  } else if(error != null){
+    jsx = "Error";
+  } else {
+    jsx = users;
+  }
+  return <div>Hello {jsx}</div>;
 }
