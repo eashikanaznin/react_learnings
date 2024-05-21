@@ -1,79 +1,71 @@
-import React from "react"
-import { TodoList } from "./TodoList"
-import { TodoListClass } from "./TodoListClass"
-import { Name } from "./Name"
-import { TodoChecklist } from "./TodoChecklist"
-import "./style.css";
-import user from "./user.json";
-import img from "./sample.png";
+import React from "react";
+import { useState, useEffect } from "react";
+import { UserList } from "./UserList";
 
-
+const CUSTOM_HTML = `<h2>Another header</h2>`
 function App() {
-
-  // // JXS is XML version of JS
-  // // camelcased except data ans aria attr
-  // // wrapped by {} is JS code
-
-
-  // // return array / string
-  // // return [1,2,3]
-
-  // const myCustomlbl = <label htmlFor="inputId">TEST</label>
-  // return  (
-  // // <h1 id="5" className="pink" style={{backgroundColor: "blue"}}>
-  // //  {2+2}
-  // // </h1>
+  const [items, setItems] = useState([
+    { id: 1, title: " item 1" },
+    { id: 2, title: " item 2" },
+  ]);
+  const [userApiData, setUserApiData] = useState();
+  const [loading, setLoading] = useState("true");
   
-  // // Practice task 
-  // <div className="large" id="largeDiv">
-  //   {myCustomlbl}
-  //   <input id="inputId" type="number" defaultValue="3" />
-  // </div>
 
-  // )
+  useEffect(() => {
+    setLoading(true);
+    const controller = new AbortController();
+    fetch("https://jsonplaceholder.typicode.com/users", {
+      signal: controller.signal,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setUserApiData(data);
+      })
+      .catch((e) => setError(e))
+      .finally(() => {
+        setLoading(false);
+      });
+    // return () => {
+    //   controller.abort();
+    // };
+  }, []);
+  // let name
+  let myName = "Eashika";
 
-  // return React.createElement("h1", {'id': "5"}, "Hello World") 
 
 
   return (
-    <div>
-      {/* <h1>Todo List</h1> */}
-      <h1>Todo List</h1>
-
-      <Name name="My Cus name 1" age={50} isAdult={true} />
-      <Name name="My Cus name 2" isAdult={false} />
-
-      <AnotherName/>
-
-      <TodoList>
-        <span>child name</span>
-      </TodoList>
-
-      <TodoListClass fruitTitle = "Mango">
-        <li>Apple</li>
-      </TodoListClass>
-
-      {/* checkbox example */}
-      <TodoChecklist isComplete="true">
-        Jane
-      </TodoChecklist>
-
-      {/*  Rendering json */}
-      <div>{JSON.stringify(user)}</div>
-
-      {/*  Rendering image */}
-      <div><img src={img}/></div>
-      
-    </div>
-
-  )
-  
+    <>
+      {/* User list excercise */}
+      {loading ? (
+        "Loading...."
+      ) : (
+        <>
+          <h1>User List</h1>
+          <ul>
+            {userApiData.map((user) => {
+              return <UserList key={user.id} name={user.name} {...user} />;
+            })}
+          </ul>
+        </>
+      )}
+      {/* practice */}
+      {/* Fragments, when we dont want to use any wrapper */}
+      Hello
+      {myName != null && <b>, Are you {myName}?</b>}
+      {items.map((item) => {
+        return (
+          <React.Fragment key={item.id}>
+            {/* JSX array */}
+            <span>{item.title}</span>
+            <input type="text" />
+            <div dangerouslySetInnerHTML={{__html: CUSTOM_HTML}}></div>
+          </React.Fragment>
+        );
+      })}
+    </>
+  );
 }
 
-// Keeping component in the same file
-class AnotherName extends React.Component {
-  render(){
-    return <b> Naznin</b>
-  }
-}
-export default App
+export default App;
