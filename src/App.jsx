@@ -1,78 +1,42 @@
-import { useState, useEffect } from "react";
-import "./style.css";
-// import { MyTodoForm } from "./MyTodoForm";
+import React from "react";
 
-function App() {
-  const [todoName, setTodoName] = useState("");
-  const [todoList, setTodoList] = useState([]);
+class App extends React.Component {
 
-  function addToTodo() {
-    if (todoName === "") return;
-
-    setTodoList((currenTodoList) => {
-      return [
-        ...currenTodoList,
-        { name: todoName, completed: false, id: crypto.randomUUID() },
-      ];
-    });
-
-    // empty the textfield after adding
-    setTodoName("");
+  constructor(props) {
+    super(props);
+    this.state = {
+      name: "",
+    };
+    this.inoutRef = React.createRef()
   }
-
-  // toggle checkbox
-
-  function toggleCheckBox( isChecked, inpId ){
-    setTodoList(
-      currenTodoList => {
-        return currenTodoList.map( todoList => {
-          if (todoList.id === inpId) return { ...todoList, isChecked}
-
-          return todoList
-        })
-      }
-    )
+  componentDidMount(){
+    this.inoutRef.current.focus()
   }
-
-  // delete todo
-  function deleteTodo(inpId){
-    setTodoList(currenTodoList => {
-      return currenTodoList.filter(todoList => todo.id !== inpId)
-    })
-  }
-  return (
-    <>
-      {JSON.stringify(todoList)}
-      <ul id="list">
-        {todoList.map((todo) => {
-          return (
-            <li className="list-item" key={todo.key}>
-              <label className="list-item-label">
-                <input
-                  checked={todo.completed}
-                  type="checkbox"
-                  data-list-item-checkbox
-                  onChange={ e => toggleCheckBox( e.target.checked, todo.id) }
-                />
-                <span data-list-item-text>{todo.name}</span>
-              </label>
-              <button data-button-delete onClick={()=>deleteTodo(todo.id)}>Delete</button>
-            </li>
-          );
-        })}
-      </ul>
-      <div id="new-todo-form">
-        <label for="todo-input">New Todo</label>
+  render() {
+    return (
+      <>
+        Name:{" "}
         <input
+        ref = { this.inoutRef }
           type="text"
-          id="todo-input"
-          value={todoName}
-          onChange={(e) => setTodoName(e.target.value)}
+          value={this.state.name}
+          onChange={(e) => this.setState({ name: e.target.value })}
         />
-        <button onClick={addToTodo}>Add Todo</button>
-      </div>
-    </>
-  );
+      </>
+    );
+  }
 }
+
+// import { useState, useEffect, useRef } from "react";
+
+// function App() {
+//   // prints without rendering
+//   const inputRef = useRef();
+
+//   useEffect(() => {
+//     inputRef.current.focus();
+//   }, []);
+//   return <input type="text" ref={inputRef} />;
+// }
 
 export default App;
