@@ -1,69 +1,76 @@
-import React from "react";
 import { useState, useEffect } from "react";
-import { UserList } from "./UserList";
+import "./style.css";
+// import { MyTodoForm } from "./MyTodoForm";
 
-const CUSTOM_HTML = `<h2>Another header</h2>`
 function App() {
-  const [items, setItems] = useState([
-    { id: 1, title: " item 1" },
-    { id: 2, title: " item 2" },
-  ]);
-  const [userApiData, setUserApiData] = useState();
-  const [loading, setLoading] = useState("true");
-  
+  const [todoName, setTodoName] = useState("");
+  const [todoList, setTodoList] = useState([]);
 
-  useEffect(() => {
-    setLoading(true);
-    const controller = new AbortController();
-    fetch("https://jsonplaceholder.typicode.com/users", {
-      signal: controller.signal,
+  function addToTodo() {
+    if (todoName === "") return;
+
+    setTodoList((currenTodoList) => {
+      return [
+        ...currenTodoList,
+        { name: todoName, completed: false, id: crypto.randomUUID() },
+      ];
+    });
+
+    // empty the textfield after adding
+    setTodoName("");
+  }
+
+  // toggle checkbox
+
+  function toggleCheckBox( isChecked, inpId ){
+    setTodoList(
+      currenTodoList => {
+        return currenTodoList.map( todoList => {
+          if (todoList.id === inpId) return { ...todoList, isChecked}
+
+          return todoList
+        })
+      }
+    )
+  }
+
+  // delete todo
+  function deleteTodo(inpId){
+    setTodoList(currenTodoList => {
+      return currenTodoList.filter(todoList => todo.id !== inpId)
     })
-      .then((response) => response.json())
-      .then((data) => {
-        setUserApiData(data);
-      })
-      .catch((e) => setError(e))
-      .finally(() => {
-        setLoading(false);
-      });
-    // return () => {
-    //   controller.abort();
-    // };
-  }, []);
-  // let name
-  let myName = "Eashika";
-
-
-
+  }
   return (
     <>
-      {/* User list excercise */}
-      {loading ? (
-        "Loading...."
-      ) : (
-        <>
-          <h1>User List</h1>
-          <ul>
-            {userApiData.map((user) => {
-              return <UserList key={user.id} name={user.name} {...user} />;
-            })}
-          </ul>
-        </>
-      )}
-      {/* practice */}
-      {/* Fragments, when we dont want to use any wrapper */}
-      Hello
-      {myName != null && <b>, Are you {myName}?</b>}
-      {items.map((item) => {
-        return (
-          <React.Fragment key={item.id}>
-            {/* JSX array */}
-            <span>{item.title}</span>
-            <input type="text" />
-            <div dangerouslySetInnerHTML={{__html: CUSTOM_HTML}}></div>
-          </React.Fragment>
-        );
-      })}
+      {JSON.stringify(todoList)}
+      <ul id="list">
+        {todoList.map((todo) => {
+          return (
+            <li className="list-item" key={todo.key}>
+              <label className="list-item-label">
+                <input
+                  checked={todo.completed}
+                  type="checkbox"
+                  data-list-item-checkbox
+                  onChange={ e => toggleCheckBox( e.target.checked, todo.id) }
+                />
+                <span data-list-item-text>{todo.name}</span>
+              </label>
+              <button data-button-delete onClick={()=>deleteTodo(todo.id)}>Delete</button>
+            </li>
+          );
+        })}
+      </ul>
+      <div id="new-todo-form">
+        <label for="todo-input">New Todo</label>
+        <input
+          type="text"
+          id="todo-input"
+          value={todoName}
+          onChange={(e) => setTodoName(e.target.value)}
+        />
+        <button onClick={addToTodo}>Add Todo</button>
+      </div>
     </>
   );
 }
