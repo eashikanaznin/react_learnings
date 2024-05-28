@@ -1,13 +1,10 @@
-import "./style.css";
-import { StateForm } from "./StateForm"
-import { RefForm } from "./RefForm";
+import { MyCounter } from "./MyCounter";
 
 function App() {
 
    
   return (
-    // <StateForm/>
-    <RefForm/>
+    <MyCounter/>
   )
   
 }
