@@ -1,76 +1,93 @@
-import { useState, useReducer } from "react"
-import "./styles.css"
-import { TodoItem } from "./TodoItem"
-
+import { useState, useReducer, useEffect } from "react";
+import "./styles.css";
+import { TodoItem } from "./TodoItem";
+import { FilterForm } from "./FilterForm";
 
 const ACTION = {
-  "ADD_NEW_TODO" : "ADD_NEW_TODO",
-  "DELETE_TODO" : "DELETE_TODO"
-}
-function reducer( myTodos, action){
-  switch(action.type){
+  ADD_NEW_TODO: "ADD_NEW_TODO",
+  DELETE_TODO: "DELETE_TODO",
+  TOGGLE_TODO: "TOGGLE_TODO",
+  HIDE_UNCHECKED: "HIDE_UNCHECKED",
+};
+const COUNT_LOC_DATA = "COUNT_LOC_DATA";
+
+function reducer(myTodos, { type, payload } ) {
+  switch (type) {
     case "ADD_NEW_TODO":
-    if (action.payload.value === "") return
+      if (payload.value === "") return;
+      // setNewTodoName("")
 
-    // setTodos(currentTodos => {
-    //   return [
-    //     ...currentTodos,
-    //     { name: newTodoName, completed: false, id: crypto.randomUUID() },
-    //   ]
-    // })
-    // setNewTodoName("")
-    return [ ...myTodos, { name: action.payload.value, completed: false, id: crypto.randomUUID() } ]
-    setNewTodoName("")
+      return [
+        ...myTodos,
+        {
+          name: payload.value,
+          completed: false,
+          id: crypto.randomUUID(),
+        },
+      ];
+      case "DELETE_TODO":
+        console.log(payload.value)
+        const updatedtodos = myTodos.filter((todo) => todo.id !== payload.todoId)
+        console.log(updatedtodos)
+        return updatedtodos
+
+      case "TOGGLE_TODO":
+        return myTodos.map(myTodo => {
+          if (myTodo.id === payload.todoId) {
+            return { ...myTodo, completed: payload.completed }
+          }
+          return myTodo
+        })
+
+        case "HIDE_UNCHECKED":
+          return myTodos.filter((todo) => todo.completed ==='completed')
+            
+
+  
+
   }
-
 }
 
-function App({ initVal = [] }) {
-  const [newTodoName, setNewTodoName] = useState("")
+function App() {
+  const [newTodoName, setNewTodoName] = useState("");
   // const [todos, setTodos] = useState([])
-  const [myTodos, dispatch] = useReducer( reducer, initVal)
+  const [myTodos, dispatch] = useReducer(reducer, [], (initVal) => {
+    const val = localStorage.getItem(COUNT_LOC_DATA);
+    if (val == null) return []
+    else
+    return JSON.parse(val)
+  });
 
-  // function addNewTodo() {
-  //   if (newTodoName === "") return
+  useEffect(() => {
+    localStorage.setItem(COUNT_LOC_DATA, JSON.stringify(myTodos));
+  }, [myTodos]);
 
-  //   setTodos(currentTodos => {
-  //     return [
-  //       ...currentTodos,
-  //       { name: newTodoName, completed: false, id: crypto.randomUUID() },
-  //     ]
-  //   })
-  //   setNewTodoName("")
-  // }
 
-  // function toggleTodo(todoId, completed) {
-  //   setTodos(currentTodos => {
-  //     return currentTodos.map(todo => {
-  //       if (todo.id === todoId) return { ...todo, completed }
 
-  //       return todo
-  //     })
-  //   })
-  // }
   function toggleTodo(todoId, completed) {
-    setTodos(currentTodos => {
-      return currentTodos.map(todo => {
-        if (todo.id === todoId) return { ...todo, completed }
-
-        return todo
-      })
+    dispatch({
+      type: ACTION.TOGGLE_TODO,
+      payload: { todoId: todoId, completed: completed },
     })
   }
 
   function deleteTodo(todoId) {
-    setTodos(currentTodos => {
-      return currentTodos.filter(todo => todo.id !== todoId)
+    dispatch({
+      type: ACTION.TOGGLE_TODO,
+      payload: { todoId: todoId },
     })
   }
-
+  function hideUnchecked(isChecked){
+    dispatch({
+      type: ACTION.HIDE_UNCHECKED,
+      payload: { isChecked: isChecked },
+    })
+  }
   return (
     <>
+    <FilterForm hideUnchecked = { hideUnchecked }/>
       <ul id="list">
-        {myTodos.map(todo => {
+        {myTodos.map((todo) => {
           return (
             <TodoItem
               key={todo.id}
@@ -78,7 +95,7 @@ function App({ initVal = [] }) {
               toggleTodo={toggleTodo}
               deleteTodo={deleteTodo}
             />
-          )
+          );
         })}
       </ul>
 
@@ -88,13 +105,22 @@ function App({ initVal = [] }) {
           type="text"
           id="todo-input"
           value={newTodoName}
-          onChange={e => setNewTodoName(e.target.value)}
+          onChange={(e) => setNewTodoName(e.target.value)}
         />
         {/* <button onClick={addNewTodo}>Add Todo</button> */}
-        <button onClick={ ()=> dispatch({ type: ACTION.ADD_NEW_TODO, payload: { value : newTodoName} })}>Add Todo</button>
+        <button
+          onClick={() =>
+            dispatch({
+              type: ACTION.ADD_NEW_TODO,
+              payload: { value: newTodoName },
+            })
+          }
+        >
+          Add Todo
+        </button>
       </div>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
