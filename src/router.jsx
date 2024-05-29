@@ -1,12 +1,47 @@
-import { createBrowserRouter } from "react-router-dom";
+import { Outlet, createBrowserRouter } from "react-router-dom";
 import { Home } from "./pages/Home";
 import { About } from "./pages/About";
 import { Storage } from "./pages/Storage";
+import { Team } from "./pages/Team";
+import { Nav } from "./Nav";
+import { TeamMember } from "./pages/TeamMember";
+import { TeamNavLayout } from "./TeamNavLayout";
 
 export const router = createBrowserRouter([
-  { path: "/" , element: <Home />},
-  { path: "/Storage" , element: <Storage />},
-  { path: "/About" , element: <About />},
-])
+  {
+    element: <NavLayout />,
+    errorElement: <h1>Error</h1>,
+    children: [
+      { path: "/", element: <Home /> },
+      { path: "/storage", element: <Storage />,  errorElement: <h1>Storage Error</h1> },
+      { path: "/about", element: <About /> },
+      {
+        path: "/team",
+        element: <TeamNav />,
+        children: [
+          { index: true, element: <Team /> },
+          { path: "john", element: <TeamMember name="John" /> },
+          { path: "doe", element: <TeamMember name="Doe" /> },
+        ],
+      },
+    ],
+  },
+]);
 
+function NavLayout() {
+  return (
+    <>
+      <Nav />
+      <Outlet />
+    </>
+  );
+}
 
+function TeamNav () {
+  return (
+    <>
+      <TeamNavLayout context = "Hi from the outlet" />
+      <Outlet />
+    </>
+  );  
+}
