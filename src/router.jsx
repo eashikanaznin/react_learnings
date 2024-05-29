@@ -1,4 +1,4 @@
-import { Outlet, createBrowserRouter } from "react-router-dom";
+import { Navigate, Outlet, createBrowserRouter } from "react-router-dom";
 import { Home } from "./pages/Home";
 import { About } from "./pages/About";
 import { Storage } from "./pages/Storage";
@@ -12,6 +12,9 @@ export const router = createBrowserRouter([
     element: <NavLayout />,
     errorElement: <h1>Error</h1>,
     children: [
+      // { path: "*", element: <h3>404</h3> },
+      { path: "*", element: <Navigate to = "/"/> },
+      { path: "/test/*", element: <h3>TEST</h3> },
       { path: "/", element: <Home /> },
       { path: "/storage", element: <Storage />,  errorElement: <h1>Storage Error</h1> },
       { path: "/about", element: <About /> },
@@ -20,8 +23,7 @@ export const router = createBrowserRouter([
         element: <TeamNav />,
         children: [
           { index: true, element: <Team /> },
-          { path: "john", element: <TeamMember name="John" /> },
-          { path: "doe", element: <TeamMember name="Doe" /> },
+          { path: ":memberId", element: <TeamMember /> }
         ],
       },
     ],
