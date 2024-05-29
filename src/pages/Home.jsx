@@ -1,3 +1,10 @@
+import { Nav } from "../Nav";
+
 export function Home(){
-  return "HOME"
+  return (
+    <>
+    <Nav/>
+    Home
+    </>
+  )
 }

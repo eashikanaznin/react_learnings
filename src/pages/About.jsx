@@ -1,3 +1,10 @@
+import { Nav } from "../Nav";
+
 export function About(){
-  return "ABOUT"
+  return (
+    <>
+    <Nav/>
+    About
+    </>
+  )
 }
