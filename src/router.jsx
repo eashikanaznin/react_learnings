@@ -21,6 +21,9 @@ export const router = createBrowserRouter([
       {
         path: "/team",
         element: <TeamNav />,
+        loader: ({request: {signal}}) => {
+          return fetch("https://jsonplaceholder.typicode.com/users", { signal })
+        },
         children: [
           { index: true, element: <Team /> },
           { path: ":memberId", element: <TeamMember /> }

@@ -1,12 +1,14 @@
 import { NavLink } from "react-router-dom"
-import teamMembers from "./teamMembers.json"
+import { useLoaderData } from "react-router-dom"
+// import teamMembers from "./teamMembers.json"
 
 export function TeamNavLayout(){
+  const teamMembers = useLoaderData()
   return (
     <nav>
     <ul>
       { teamMembers.map( members => (
-        <li><NavLink to = {members.id} >{members.name}</NavLink></li>
+        <li><NavLink to = {members.id.toString()} >{members.name} {members.id}</NavLink></li>
       )) }
       
 
