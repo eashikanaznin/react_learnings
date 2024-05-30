@@ -1,61 +1,67 @@
-import { Navigate, Outlet, createBrowserRouter, redirect, useNavigation } from "react-router-dom";
-import { Home } from "./pages/Home";
-import { About } from "./pages/About";
-import { Storage } from "./pages/Storage";
-import { Team } from "./pages/Team";
+import { Outlet, createBrowserRouter, Navigate } from "react-router-dom";
+import { Posts } from "./pages/Posts";
+import { Users } from "./pages/Users";
+import { Todos } from "./pages/Todos";
 import { Nav } from "./Nav";
-import { TeamMember } from "./pages/TeamMember";
-import { TeamNavLayout } from "./TeamNavLayout";
+import { Post } from "./pages/Post";
+import { postLoader } from "./apiCalls";
+
+
+
 
 export const router = createBrowserRouter([
   {
     element: <NavLayout />,
-    errorElement: <h1>Error</h1>,
     children: [
-      // { path: "*", element: <h3>404</h3> },
-      { path: "*", element: <Navigate to = "/"/> },
-      { path: "/test/*", element: <h3>TEST</h3> },
-      { path: "/", element: <Home /> },
-      { path: "/storage", element: <Storage />,  errorElement: <h1>Storage Error</h1> },
-      { path: "/about", element: <About /> },
+      { path: "*", element: <h3>404 Not Found</h3> },
+      { path: "/", element: <Navigate to="/posts" /> },
       {
-        path: "/team",
-        element: <TeamNav />,
-        loader: ({request: {signal}}) => {
-          return fetch("https://jsonplaceholder.typicode.com/users", { signal })
+        path: "/posts",
+        loader: postLoader,
+        element: <Posts />,
+      },
+      {
+        path: "/posts/:postId",
+        loader: postLoader,
+        element: <Post />,
+      },
+      {
+        path: "/users",
+        loader: ({ request: { signal } }) => {
+          return fetch("http://127.0.0.1:3000/users", { signal });
         },
-        children: [
-          { index: true, element: <Team /> },
-          { path: ":memberId", 
-          loader: ({ params, request: {signal} }) => {
-            return fetch(`https://jsonplaceholder.typicode.com/users/${params.memberId}`, { signal }).then( res => {
-              if( res.status === 200) return res.json()
-              throw redirect("/team")
-            })
-          },
-          element: <TeamMember /> }
-        ],
+        element: <Users />,
+      },
+      {
+        path: "/todos",
+        loader: ({ request: { signal } }) => {
+          return fetch("http://127.0.0.1:3000/todos", { signal });
+        },
+        element: <Todos />,
       },
     ],
   },
 ]);
 
 function NavLayout() {
-  const {state } = useNavigation()
   return (
     <>
       <Nav />
-      {/* <Outlet /> */}
-      { state === "loading"? <h2>Loading ...</h2> : <Outlet /> }
+      <Outlet />
     </>
   );
 }
+// src/loaders.js
 
-function TeamNav () {
-  return (
-    <>
-      <TeamNavLayout context = "Hi from the outlet" />
-      <Outlet />
-    </>
-  );  
-}
+// export const commentLoader = async ({ params, request: { signal } }) => {
+//   const { postId } = params;
+
+//   const postResponse = await fetch(`http://127.0.0.1:3000/posts/${postId}`, { signal });
+//   const post = await postResponse.json();
+
+//   const userResponse = await fetch(`http://127.0.0.1:3000/users/${post.userId}`, { signal });
+//   const user = await userResponse.json();
+
+//   return { post, user };
+// };
+

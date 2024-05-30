@@ -1,13 +1,14 @@
-import { NavLink } from "react-router-dom"
+import { NavLink } from "react-router-dom";
+
 export function Nav(){
-  return (
-    <nav>
-    <ul>
-      <li><NavLink to = "/" >Home</NavLink></li>
-      <li><NavLink to = "/about" >About</NavLink></li>
-      <li><NavLink to = "/storage" >Storage</NavLink></li>
-      <li><NavLink to = "/team" >Team</NavLink></li>
+  return(
+    <nav class="top-nav">
+      <div class="nav-text-large">My App</div>
+      <ul class="nav-list">
+      <li><NavLink to = "/posts">Posts</NavLink></li>
+      <li><NavLink to = "/users">Users</NavLink></li>
+      <li><NavLink to = "/todos">Todos</NavLink></li>
     </ul>
-   </nav>
+  </nav>
   )
 }
