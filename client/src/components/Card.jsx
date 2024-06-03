@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 
-export function PostCard({ id, title, body }) {
+export function Card({ id, title, body }) {
   return (
     <div className="card">
       <div className="card-header">{title}</div>
